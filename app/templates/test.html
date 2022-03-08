@@ -1,0 +1,325 @@
+{% extends "base.html" %} {% block title %} Home {% endblock %} {% block content
+%}
+<div class="flex flex-col flex-1 p-4 px-6 py-4 overflow-y-auto bg-gray-100">
+  <form action="/" method="POST" class="flex space-x-2">
+    <div class="relative rounded-md w-min">
+      <div
+        class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          viewBox="0 0 512 512"
+        >
+          <path
+            d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z"
+            fill="none"
+            stroke="currentColor"
+            stroke-miterlimit="10"
+            stroke-width="32"
+          />
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-miterlimit="10"
+            stroke-width="32"
+            d="M338.29 338.29L448 448"
+          />
+        </svg>
+      </div>
+      <input
+        type="text"
+        name="ticker"
+        value="{{ticker}}"
+        class="flex-1 px-3 py-1 pl-10 text-base text-gray-700 placeholder-gray-400 uppercase bg-white border border-transparent border-gray-300 rounded-lg shadow-sm appearance-none placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+        placeholder="Search"
+      />
+    </div>
+    <button
+      type="submit"
+      class="px-3 py-1 text-base font-semibold text-center text-white transition duration-200 ease-in bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+    >
+      Search
+    </button>
+  </form>
+  {% if data %}
+  <div class="h-full mt-4">
+    <div class="flex flex-col h-full p-4 m-2 bg-white rounded-md shadow">
+      <div class="grid grid-cols-4">
+        <p class="font-bold">O: <span id="o" class="font-light"></span></p>
+        <p class="font-bold">H: <span id="h" class="font-light"></span></p>
+        <p class="font-bold">L: <span id="l" class="font-light"></span></p>
+        <p class="font-bold">C: <span id="c" class="font-light"></span></p>
+      </div>
+      <div class="flex-auto"><canvas id="myChart"></canvas></div>
+    </div>
+    <div class="container max-w-3xl px-4 py-8 mx-auto sm:px-8">
+      <div class="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
+        <div class="inline-block min-w-full overflow-hidden rounded-lg shadow">
+          <table class="min-w-full leading-normal">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  class="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
+                >
+                  User
+                </th>
+                <th
+                  scope="col"
+                  class="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
+                >
+                  Role
+                </th>
+                <th
+                  scope="col"
+                  class="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
+                >
+                  Created at
+                </th>
+                <th
+                  scope="col"
+                  class="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
+                >
+                  status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <a href="#" class="relative block">
+                        <img
+                          alt="profil"
+                          src="/images/person/8.jpg"
+                          class="object-cover w-10 h-10 mx-auto rounded-full"
+                        />
+                      </a>
+                    </div>
+                    <div class="ml-3">
+                      <p class="text-gray-900 whitespace-no-wrap">Jean marc</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">Admin</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">12/09/2020</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <span
+                    class="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="absolute inset-0 bg-green-200 rounded-full opacity-50"
+                    >
+                    </span>
+                    <span class="relative"> active </span>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <a href="#" class="relative block">
+                        <img
+                          alt="profil"
+                          src="/images/person/9.jpg"
+                          class="object-cover w-10 h-10 mx-auto rounded-full"
+                        />
+                      </a>
+                    </div>
+                    <div class="ml-3">
+                      <p class="text-gray-900 whitespace-no-wrap">Marcus coco</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">Designer</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">01/10/2012</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <span
+                    class="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="absolute inset-0 bg-green-200 rounded-full opacity-50"
+                    >
+                    </span>
+                    <span class="relative"> active </span>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <a href="#" class="relative block">
+                        <img
+                          alt="profil"
+                          src="/images/person/10.jpg"
+                          class="object-cover w-10 h-10 mx-auto rounded-full"
+                        />
+                      </a>
+                    </div>
+                    <div class="ml-3">
+                      <p class="text-gray-900 whitespace-no-wrap">Ecric marc</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">Developer</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">02/10/2018</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <span
+                    class="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="absolute inset-0 bg-green-200 rounded-full opacity-50"
+                    >
+                    </span>
+                    <span class="relative"> active </span>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <a href="#" class="relative block">
+                        <img
+                          alt="profil"
+                          src="/images/person/6.jpg"
+                          class="object-cover w-10 h-10 mx-auto rounded-full"
+                        />
+                      </a>
+                    </div>
+                    <div class="ml-3">
+                      <p class="text-gray-900 whitespace-no-wrap">Julien Huger</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">User</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <p class="text-gray-900 whitespace-no-wrap">23/09/2010</p>
+                </td>
+                <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+                  <span
+                    class="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="absolute inset-0 bg-green-200 rounded-full opacity-50"
+                    >
+                    </span>
+                    <span class="relative"> active </span>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %} {% endblock %} {% block script%} {% if data %}
+<script>
+  let data = {{ data | tojson }};
+  let { Volume, Open, Close, High, Low, ...dataset_dict } = data['data'];
+  let colors = [
+    'rgb(255, 99, 132)',
+    'rgb(255, 159, 64)',
+    'rgb(255, 205, 86)',
+    'rgb(75, 192, 192)',
+    'rgb(54, 162, 235)',
+    'rgb(153, 102, 255)',
+    'rgb(201, 203, 207)'
+  ]
+
+  let datasets = Object.entries(dataset_dict).map((kv, index) => {
+
+    return {
+      label: kv[0],
+      type: 'line',
+      data: kv[1].map((v, i) => { return { x: luxon.DateTime.fromRFC2822(data['dates'][i]).valueOf(), y: v } }),
+      fill: false,
+      borderColor: colors[index],
+      borderWidth: 1,
+      tension: 0.1,
+      pointRadius: 1,
+    }
+  });
+
+  let candlestickData = data["data_records"].map((value) => {
+    res = {
+      x: luxon.DateTime.fromRFC2822(value.Date).valueOf(),
+      o: value.Open,
+      h: value.High,
+      l: value.Low,
+      c: value.Close
+    };
+    return res
+  });
+
+
+  console.log(datasets);
+
+  const ctx = document.getElementById("myChart").getContext("2d");
+  const myChart = new Chart(ctx, {
+    type: "candlestick",
+    data: {
+      labels: data['dates'],
+      datasets: [{
+        label: 'CHRT - Chart.js Corporation',
+        data: candlestickData
+      }, ...datasets],
+    },
+    options: {
+      scales: {
+        x: {
+          type: 'timeseries',
+          time: {
+            unit: 'month'
+          },
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        intersect: false,
+      },
+      onHover: onHover,
+      responsive: true,
+      maintainAspectRatio: false,
+    },
+  });
+
+  function onHover(evt, item) {
+    const points = myChart.getElementsAtEventForMode(evt, 'index', { intersect: false }, false)
+    if (points.length) {
+      const candlePoint = points[0];
+      const label = myChart.data.labels[candlePoint.index];
+      const {x, ...value} = myChart.data.datasets[candlePoint.datasetIndex].data[candlePoint.index];
+      Object.entries(value).map((val, i) => {
+        let display = document.querySelector(`#${val[0]}`);
+        display.innerHTML = val[1];
+      })
+    }
+  }
+</script>
+{% endif %} {% endblock %}

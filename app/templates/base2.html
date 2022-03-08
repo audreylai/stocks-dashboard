@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %} | Scamé Stocks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
+    <script src="{{url_for('static', filename='chartjs-chart-financial.js')}}"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{url_for('static', filename='scrollbar.css')}}"
+    />
+  </head>
+  <body>
+    <div class="flex h-screen">
+      <div id="sidebar"></div>
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+  <script>
+    let vh = window.innerHeight * 0.01;
+    console.log(vh);
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+    window.addEventListener("resize", () => {
+      // We execute the same script as before
+      let vh = window.innerHeight * 0.01;
+      console.log(vh);
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
+
+    var elem = document.querySelector("#hoe");
+    console.log(window.getComputedStyle(elem, null).getPropertyValue("height"));
+  </script>
+  <style>
+    .h-screen {
+      height: 100vh;
+      height: calc(var(--vh, 1vh) * 100);
+    }
+  </style>
+  {% block script %}{% endblock %}
+</html>
