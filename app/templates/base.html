@@ -15,23 +15,46 @@
       type="text/css"
       href="{{url_for('static', filename='scrollbar.css')}}"
     />
+    <script>
+      let vh = window.innerHeight * 0.01;
+      console.log(vh);
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+      window.addEventListener("resize", () => {
+        // We execute the same script as before
+        let vh = window.innerHeight * 0.01;
+        console.log(vh);
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      });
+
+      var elem = document.querySelector("#hoe");
+      console.log(
+        window.getComputedStyle(elem, null).getPropertyValue("height")
+      );
+    </script>
+    <style>
+      .h-screen {
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+      }
+    </style>
+    {% block head %} {% endblock %}
   </head>
   <body>
-    <div class="flex lg:flex-row flex-col-reverse h-screen">
+    <div class="flex flex-col-reverse h-screen lg:flex-row">
       <div
         id="sidebar"
-        class="flex lg:flex-col flex-row lg:w-16 xl:w-64 lg:h-screen h-16 lg:p-4 bg-white shrink-0 lg:border-r border-t justify-center items-center mx-4 lg:mx-0"
+        class="flex flex-row items-center justify-center h-16 mx-4 bg-white border-t lg:flex-col lg:w-16 xl:w-64 lg:h-screen lg:p-4 shrink-0 lg:border-r lg:mx-0"
       >
-        <div class="lg:flex hidden items-center space-x-2">
+        <div class="items-center hidden space-x-2 lg:flex">
           <img
             src="{{url_for('static', filename='pfp.jpeg')}}"
             alt="pfp"
             class="w-8 rounded-full"
           />
-          <p class="font-semibold text-lg hidden xl:flex">Howon</p>
+          <p class="hidden text-lg font-semibold xl:flex">Howon</p>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="text-gray-500 w-4"
+            class="w-4 text-gray-500"
             viewBox="0 0 512 512"
           >
             <path
@@ -44,7 +67,9 @@
             />
           </svg>
         </div>
-        <div class="flex flex-row lg:flex-col justify-center h-full items-center w-full lg:w-auto">
+        <div
+          class="flex flex-row items-center justify-center w-full h-full lg:flex-col lg:w-auto"
+        >
           <a
             href="/"
             class="flex items-center w-full h-12 px-4 text-gray-800 rounded-lg lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
@@ -71,11 +96,11 @@
                 stroke-width="32"
               />
             </svg>
-            <p class="font-bold text-xs hidden xl:flex hidden xl:flex">Markets</p>
+            <p class="hidden text-xs font-bold xl:flex">Home</p>
           </a>
           <a
             href="/"
-            class="flex items-center w-full h-12 px-4 lg:mt-4 text-gray-800 rounded-lg lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
+            class="flex items-center w-full h-12 px-4 text-gray-800 rounded-lg lg:mt-4 lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -100,11 +125,11 @@
                 stroke-width="32"
               />
             </svg>
-            <p class="font-bold text-xs hidden xl:flex">Portfolio</p>
+            <p class="hidden text-xs font-bold xl:flex">Analytics</p>
           </a>
           <a
-            href="/"
-            class="flex items-center w-full h-12 px-4 lg:mt-4 text-gray-800 rounded-lg lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
+            href="/stock-list"
+            class="flex items-center w-full h-12 px-4 text-gray-800 rounded-lg lg:mt-4 lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -159,18 +184,17 @@
                 stroke-width="32"
               />
             </svg>
-            <p class="font-bold text-xs hidden xl:flex">Stocks</p>
+            <p class="hidden text-xs font-bold xl:flex">Stock List</p>
           </a>
           <a
             href="/"
-            class="flex items-center w-full h-12 px-4 lg:mt-4 text-gray-800 rounded-lg lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
+            class="flex items-center w-full h-12 px-4 text-gray-800 rounded-lg lg:mt-4 lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="w-6 h-6 lg:mr-2"
               viewBox="0 0 512 512"
             >
-              <title>Newspaper</title>
               <path
                 d="M368 415.86V72a24.07 24.07 0 00-24-24H72a24.07 24.07 0 00-24 24v352a40.12 40.12 0 0040 40h328"
                 fill="none"
@@ -197,11 +221,45 @@
                 d="M176 208h-64a16 16 0 01-16-16v-64a16 16 0 0116-16h64a16 16 0 0116 16v64a16 16 0 01-16 16z"
               />
             </svg>
-            <p class="font-bold text-xs hidden xl:flex">News</p>
+            <p class="hidden text-xs font-bold xl:flex">Watchlist</p>
           </a>
           <a
             href="/"
-            class="flex items-center w-full h-12 px-4 lg:mt-4 text-gray-800 rounded-lg lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
+            class="flex items-center w-full h-12 px-4 text-gray-800 rounded-lg lg:mt-4 lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 h-6 lg:mr-2"
+              viewBox="0 0 512 512"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linejoin="round"
+                stroke-width="32"
+                d="M160 336V48l32 16 32-16 31.94 16 32.37-16L320 64l31.79-16 31.93 16L416 48l32.01 16L480 48v224"
+              />
+              <path
+                d="M480 272v112a80 80 0 01-80 80h0a80 80 0 01-80-80v-48H48a15.86 15.86 0 00-16 16c0 64 6.74 112 80 112h288"
+                fill="none"
+                stroke="currentColor"
+                stroke-linejoin="round"
+                stroke-width="32"
+              />
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="32"
+                d="M224 144h192M288 224h128"
+              />
+            </svg>
+            <p class="hidden text-xs font-bold xl:flex">Transections</p>
+          </a>
+          <a
+            href="/"
+            class="flex items-center w-full h-12 px-4 text-gray-800 rounded-lg lg:mt-4 lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -248,13 +306,13 @@
                 stroke-width="32"
               />
             </svg>
-            <p class="font-bold text-xs hidden xl:flex">Options</p>
+            <p class="hidden text-xs font-bold xl:flex">Options</p>
           </a>
         </div>
         <div>
           <a
             href="/"
-            class="flex items-center w-full h-12 px-4 lg:mt-4 text-gray-800 rounded-lg lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
+            class="flex items-center w-full h-12 px-4 text-gray-800 rounded-lg lg:mt-4 lg:rounded-none xl:rounded-lg hover:bg-gray-100 hover:text-gray-600"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -270,32 +328,12 @@
                 stroke-width="32"
               />
             </svg>
-            <p class="font-bold text-xs hidden xl:flex">Settings</p>
+            <p class="hidden text-xs font-bold xl:flex">Settings</p>
           </a>
         </div>
       </div>
       {% block content %}{% endblock %}
     </div>
   </body>
-  <script>
-    let vh = window.innerHeight * 0.01;
-    console.log(vh);
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
-    window.addEventListener("resize", () => {
-      // We execute the same script as before
-      let vh = window.innerHeight * 0.01;
-      console.log(vh);
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    });
-
-    var elem = document.querySelector("#hoe");
-    console.log(window.getComputedStyle(elem, null).getPropertyValue("height"));
-  </script>
-  <style>
-    .h-screen {
-      height: 100vh;
-      height: calc(var(--vh, 1vh) * 100);
-    }
-  </style>
   {% block script %}{% endblock %}
 </html>

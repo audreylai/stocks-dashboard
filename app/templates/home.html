@@ -1,6 +1,6 @@
-{% extends "base1.html" %} {% block title %} Home {% endblock %} {% block
+{% extends "base.html" %} {% block title %} Home {% endblock %} {% block
 content %}
-<div class="grid flex-1 h-full grid-cols-6 gap-4 p-4 px-6 py-4 overflow-y-auto bg-gray-100 2xl:grid-cols-4">
+<div class="grid flex flex-1 h-screen grid-cols-6 gap-4 p-4 px-6 py-4 overflow-y-auto bg-gray-100 2xl:grid-cols-4">
   <div class="flex flex-col col-span-6 p-1 space-y-4 overflow-y-auto lg:col-span-2 2xl:col-span-1">
     <form action="/" method="POST" class="relative">
       <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none">
@@ -11,6 +11,7 @@ content %}
             d="M338.29 338.29L448 448" />
         </svg>
       </div>
+      <input type="hidden" name="page" value="1">
       <input type="text" name="ticker" value="{{ticker}}"
         class="flex-1 w-full px-3 py-1 pl-10 text-base text-gray-700 placeholder-gray-400 uppercase bg-white border border-transparent border-gray-300 rounded-lg shadow-sm appearance-none placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
         placeholder="Search" />
@@ -34,7 +35,7 @@ content %}
     </div>
   </div>
   {% if data %}
-  <div class="inset-0 w-full h-full col-span-4 h- g:static bg-black/20 lg:bg-transparent shrink 2xl:col-span-3"
+  <div class="inset-0 w-full h-full col-span-4 g:static bg-black/20 lg:bg-transparent shrink 2xl:col-span-3"
     id="output-panel">
     <div
       class="fixed bottom-0 left-0 right-0 flex-col p-4 space-y-2 bg-white lg:h-full lg:static top-16 rounded-t-2xl lg:bg-transparent lg:p-1 lg:flex">
@@ -50,7 +51,7 @@ content %}
           </svg>
         </button>
       </div>
-      <div class="h-screen pb-10 overflow-auto">
+      <div class="grow h-96 pb-10 overflow-auto">
         <div class="p-4 bg-white rounded-md shadow h-1/2">
           <canvas id="myChart"></canvas>
         </div>
@@ -71,11 +72,11 @@ content %}
                     </th>
                     <th scope="col"
                       class="px-3 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200 lg:px-5">
-                      Pattern
+                      Action
                     </th>
                     <th scope="col"
                       class="px-3 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200 lg:px-5">
-                      Action
+                      Pattern
                     </th>
                     <th scope="col"
                       class="px-3 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200 lg:px-5">
@@ -84,7 +85,7 @@ content %}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for row in patterns_table %}
+                  {% for row in patterns_table[(page-1)*10:page*10] %}
                   <tr>
                     <td class="px-3 py-3 text-sm bg-white border-b border-gray-200 lg:px-5">
                       <p class="text-gray-900 whitespace-no-wrap">
@@ -95,10 +96,7 @@ content %}
                       <p class="text-gray-900 whitespace-no-wrap tabular-nums">{{ '%.2f' % row["value"]}}</p>
                     </td>
                     <td class="px-3 py-3 text-sm bg-white border-b border-gray-200 lg:px-5">
-                      <p class="text-gray-900 whitespace-no-wrap">{{row["candlestick_pattern"]}}</p>
-                    </td>
-                    <td class="px-3 py-3 text-sm bg-white border-b border-gray-200 lg:px-5">
-                      {% if row["trend"] == "bear"%}
+                      {% if row["trend"] == "bull"%}
                       <a
                         class="px-3 py-1 text-base font-semibold text-center text-white transition duration-200 ease-in rounded-lg shadow-md bg-emerald-600">
                         BUY
@@ -111,6 +109,9 @@ content %}
                       {% endif %}
                     </td>
                     <td class="px-3 py-3 text-sm bg-white border-b border-gray-200 lg:px-5">
+                        <p class="text-gray-900 whitespace-no-wrap">{{row["candlestick_pattern"]}}_{{row['trend']}}</p>
+                      </td>
+                    <td class="px-3 py-3 text-sm bg-white border-b border-gray-200 lg:px-5 text-right">
                       <span class="relative inline-block px-3 py-1 font-semibold leading-tight text-green-900">
                         <span aria-hidden="true" class="absolute inset-0 {{'bg-gray-200' if row['profit'] == 0 else ('bg-green-300' if row['profit'] > 0 else 'bg-red-300')}} rounded-full opacity-50">
                         </span>
@@ -121,6 +122,44 @@ content %}
                   {% endfor %}
                 </tbody>
               </table>
+              <div class="px-5 bg-white py-4 flex flex-col xs:flex-row items-center xs:justify-between">
+                <div class="flex items-center">
+                    <form action="/" method="POST">
+                        <input type="hidden" name="page" value="{{page-1}}">
+                        <input type="hidden" name="ticker" value="{{ticker}}">
+                        <button type="submit" class="w-full p-4 border-t border-b border-l text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100" 
+                        {% if page == 1 %} disabled {% endif %}
+                        >
+                            <svg width="9" fill="currentColor" height="8" class="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z">
+                                </path>
+                            </svg>
+                        </button>
+                    </form>
+                    {% for i in range(1, (patterns_table|length // -10)*-1+1) %}
+                        <form action="/" method="POST" class="{{ 'text-indigo-500' if page == i else 'text-gray-600'}}">
+                            <input type="hidden" name="page" value="{{i}}">
+                            <input type="hidden" name="ticker" value="{{ticker}}">
+                            <button type="submit" class="w-full px-4 py-2 border-t border-b border-l text-base bg-white hover:bg-gray-100">
+                                {{i}}
+                            </button>
+                        </form>
+                    {% endfor %}
+                    <form action="/" method="POST">
+                        <input type="hidden" name="page" value="{{page+1}}">
+                        <input type="hidden" name="ticker" value="{{ticker}}">
+                        <button type="submit" class="w-full p-4 border text-base  rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"
+                        {% if page == (patterns_table|length // -10)*-1 %} disabled {% endif %}
+                        >
+                            <svg width="9" fill="currentColor" height="8" class="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z">
+                                </path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            </div>
             </div>
           </div>
         </div>
@@ -169,7 +208,7 @@ content %}
     });
 
 
-    console.log(datasets);
+    console.log(candlestickData);
 
     const ctx = document.getElementById("myChart").getContext("2d");
     const myChart = new Chart(ctx, {
