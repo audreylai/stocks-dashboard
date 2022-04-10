@@ -97,37 +97,64 @@
 {% endblock %} {% block content %}
 <div class="w-full h-screen p-5 overflow-y-auto bg-gray-100">
   <div class="p-8 bg-white rounded shadow lg:mt-0">
-    <form action="/stock-list" method="POST" class="flex items-center mb-4 space-x-2">
-      <p class="text-lg font-medium">Last update: {{last_update}}</p>
-      <button type="submit" class="px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ">
-        Refresh Data
-      </button>
-    </form>
+    <div class="flex items-center mb-4 space-x-2 place-content-between">
+      <form action="/stock-list" method="POST" class="flex items-center">
+        <p class="text-lg font-medium">Last update: {{last_update}}</p>
+        <button type="submit"
+          class="px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ">
+          Refresh Data
+        </button>
+      </form>
+      <div class="industry-filter">
+        <select id="industryFilter" class="block w-52 text-gray-700 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" name="animals">
+          <option value="">
+            Select an option
+          </option>
+          {% for industry in industries %}
+          <option value="{{industry}}">
+            {{industry}}
+          </option>
+          {% endfor %}
+      </select>
+      </div>
+    </div>
     <table id="table" class="stripe hover">
       <thead>
         <tr>
-        {% for k in stock_table[0] %}
-        {% if k != "_id" %}
+          {% for k in stock_table[0] %}
+          {% if k != "_id" %}
           <th class="p-4 font-normal text-gray-900 border-b-2 dark:border-dark-5 whitespace-nowrap">
             {{k}}
           </th>
           {% endif %}
-        {% endfor %}
-      </tr>
-  
+          {% endfor %}
+        </tr>
+
       </thead>
       <tbody>
         {% for row in stock_table %}
         <tr class="text-gray-700">
           {% for k,v in row.items() %}
-            {% if k == "Board Lot" %}
-            <td class="p-4 text-right border-b-2 dark:border-dark-5">{{v}}</td>
-            {% elif k != "_id" %}
-            <td class="p-4 border-b-2 dark:border-dark-5">{{v}}</td>
-            {% endif %}
+
+          {% if k == "Board Lot" %}
+          <td class="p-4 text-right border-b-2 dark:border-dark-5">
+            <form action="/stock-info" method="POST">
+              <input type="hidden" name="page" value="1">
+              <input type="hidden" name="ticker" value="{{row['Stock Code']}}" /> 
+              <a class="cursor-pointer" onclick="this.parentNode.submit()">{{v}}</a>
+            </form>
+          </td>
+          {% elif k != "_id" %}
+          <td class="p-4 border-b-2 dark:border-dark-5">
+            <form action="/stock-info" method="POST">
+            <input type="hidden" name="page" value="1">
+            <input type="hidden" name="ticker" value="{{row['Stock Code']}}" /> 
+            <a class="cursor-pointer" onclick="this.parentNode.submit()">{{v}}</a>
+          </form></td>
+          {% endif %}
           {% endfor %}
         </tr>
-        {% endfor %}
+          {% endfor %}
       </tbody>
     </table>
   </div>
@@ -135,10 +162,44 @@
 {% endblock %}
 {% block script %}
 <script>
-  $(document).ready( function () {
+  $(document).ready(function () {
     $('#table').DataTable({
-      iDisplayLength: 25
+      iDisplayLength: 25,
+      searching: true
     });
-} );
+    var table = $('#table').DataTable();
+    $("#table.dataTables_filter").append($("#industryFilter"));
+
+    
+    var industryIndex = 0;
+    $("#table th").each(function (i) {
+      if ($($(this)).html().replace(/\s/g, "") == "Industry") {
+        industryIndex = i; return false;
+      }
+    });
+
+    //Use the built in datatables API to filter the existing rows by the Category column
+    $.fn.dataTable.ext.search.push(
+      function (settings, data, dataIndex) {
+        var selectedItem = $('#industryFilter').val()
+        var industry = data[industryIndex];
+
+        if (selectedItem === "" || industry.replace(/\s/g, "") == selectedItem.replace(/\s/g, "")) {
+          return true;
+        }
+        return false;
+      }
+    );
+
+    //Set the change event for the Category Filter dropdown to redraw the datatable each time
+    //a user selects a new filter.
+    $("#industryFilter").change(function (e) {
+      table.draw();
+    });
+
+    table.draw();
+
+  });
+
 </script>
 {% endblock %}

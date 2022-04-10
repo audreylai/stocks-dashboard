@@ -12,21 +12,34 @@ def set_ticker():
   print("/ticker", request.form["ticker"], "PAGE:", request.form["page"])
   ticker = request.form["ticker"]
   data = get_ticker(ticker)
-  patterns_table = get_patterns(data["df"])
-  profit_total = sum(d['profit'] for d in patterns_table)
-  return render_template("home.html", ticker=ticker, data=data["data_dict"], patterns_table=patterns_table, profit_total=profit_total, page=int(request.form["page"]))
+  if data: 
+    patterns_table = get_patterns(data["df"])
+    profit_total = sum(d['profit'] for d in patterns_table)
+    return render_template("home.html", ticker=ticker, data=data["data_dict"], patterns_table=patterns_table, profit_total=profit_total, page=int(request.form["page"]))
+  else:
+    return "ticker not found"
 
 @app.route("/stock-list")
 def stock_list():
   stock_table = get_stock_info()
   last_update = stock_table['last_update'].strftime("%d/%m/%Y")
-  return render_template("stock_list.html", stock_table=stock_table['table'], last_update=last_update)
+  return render_template("stock_list.html", stock_table=stock_table['table'], last_update=last_update, industries=stock_table['industries'])
 
 @app.route("/stock-list", methods=["POST"])
 def update_stock_list():
   update_stock_info()
   return redirect(url_for('stock_list'))
 
+@app.route("/stock-info", methods=["POST"])
+def stock_info():
+  ticker = request.form["ticker"]
+  data = get_ticker(ticker)
+  if data:
+    patterns_table = get_patterns(data["df"])
+    profit_total = sum(d['profit'] for d in patterns_table)
+    return render_template("stock_info.html", ticker=ticker, data=data["data_dict"], patterns_table=patterns_table, profit_total=profit_total, page=int(request.form["page"]))
+  else:
+    return "ticker not found"
 
 
 if __name__ == "__main__":

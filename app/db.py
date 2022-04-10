@@ -3,22 +3,23 @@ import talib
 import yfinance as yf
 import pandas as pd
 import datetime
+import requests
+from bs4 import BeautifulSoup
 from itertools import compress
 
-
 def get_database():
-		from pymongo import MongoClient
-		import pymongo
+	from pymongo import MongoClient
+	import pymongo
 
-		# Provide the mongodb atlas url to connect python to mongodb using pymongo
-		CONNECTION_STRING = "localhost:27017"
+	# Provide the mongodb atlas url to connect python to mongodb using pymongo
+	CONNECTION_STRING = "localhost:27017"
 
-		# Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
-		from pymongo import MongoClient
-		client = MongoClient(CONNECTION_STRING)
+	# Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
+	from pymongo import MongoClient
+	client = MongoClient(CONNECTION_STRING)
 
-		# Create the database for our example (we will use the same database throughout the tutorial
-		return client['stocks']
+	# Create the database for our example (we will use the same database throughout the tutorial
+	return client['stocks']
 
 
 def get_ticker(ticker_str):
@@ -144,15 +145,30 @@ def update_stock_info():
 
 	data = pd.read_excel(
 		"https://www.hkex.com.hk/eng/services/trading/securities/securitieslists/ListOfSecurities.xlsx",
-		header=2, converters={'Stock Code': lambda x: str(x)})
+		header=2, converters={'Stock Code': lambda x: str(x)[-4:]+".HK"})
+
+	page = requests.get("https://www.etnet.com.hk/www/eng/stocks/industry_adu.php")
+	soup = BeautifulSoup(page.content, 'html.parser')
+
+	table = soup.find("table")
+	data_dict = {}
+	for row in table.find_all("tr", valign="top"):
+		sub_page = requests.get("https://www.etnet.com.hk/www/eng/stocks/"+row.find("a")["href"])
+		sub_soup = BeautifulSoup(sub_page.content, 'html.parser')
+		sub_table = sub_soup.find("table", cellspacing="0", cellpadding="2")
+		data_dict[row.find("a").text] = [sub_row.find("td").text[-4:]+".HK" for sub_row in sub_table.find_all("tr")[1:]]
+	for key, value in data_dict.items():
+		for code in value:
+			data.loc[data["Stock Code"] == code, "Industry"] = key
+
+
 	information = stocks["info"]
 	information.drop({})
-	information.insert_many(data[data['Category']=="Equity"][['Stock Code', 'Name of Securities', 'Board Lot']].to_dict("records"))
+	information.insert_many(data[data['Category']=="Equity"][['Stock Code', 'Name of Securities', 'Board Lot', "Industry"]].to_dict("records"))
 	date = datetime.datetime.strptime(pd.read_excel("https://www.hkex.com.hk/eng/services/trading/securities/securitieslists/ListOfSecurities.xlsx", skiprows=1, nrows=0).columns[0].replace('Updated as at ', ''), '%d/%m/%Y')- datetime.timedelta(days=1)
-	print(date)
 	information.insert_one({"last_update": date})
 
 def get_stock_info():
 	stocks = get_database()
 	information = stocks["info"]
-	return {"table": information.find({"last_update":{"$exists": False}}), "last_update": information.find_one({"last_update":{"$exists": True}})['last_update']}
+	return {"table": information.find({"last_update":{"$exists": False}}), "last_update": information.find_one({"last_update":{"$exists": True}})['last_update'], "industries": information.distinct("Industry")}
